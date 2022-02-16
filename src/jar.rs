@@ -1,14 +1,26 @@
 use {
     crate::Application,
     std::{
-        env::current_dir,
+        env::{args_os, current_dir, set_current_dir},
         fs::{read_dir, remove_file, DirEntry, File},
         io::{Result, Write},
+        path::PathBuf,
     },
 };
 
 pub fn current_application(projects: Vec<String>) -> (String, Application) {
     || -> Result<(String, Application)> {
+        let path = match || -> Option<PathBuf> {
+            let inner = PathBuf::from(args_os().nth(1)?.to_str()?);
+            assert!(inner.is_dir(), "Not a valid directory");
+            Some(inner)
+        }() {
+            Some(path) => path,
+            None => current_dir()?,
+        };
+
+        set_current_dir(path)?;
+
         let jar = PaperMcJar::from(
             read_dir(current_dir()?)?
                 .filter_map(std::io::Result::ok)
@@ -16,7 +28,6 @@ pub fn current_application(projects: Vec<String>) -> (String, Application) {
                 .expect("Jar file not found"),
         );
         assert!(projects.contains(&jar.project));
-
         Ok((jar.project.clone(), jar.into()))
     }()
     .expect("Io Error")
