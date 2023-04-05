@@ -1,7 +1,7 @@
 use reqwest::blocking::{get, Response};
 pub use reqwest::Result;
 
-const PATH: &str = "https://papermc.io/api/v2";
+const PATH: &str = "https://api.papermc.io/v2";
 
 #[derive(Clone, Debug)]
 struct Path(String);
