@@ -1,6 +1,6 @@
 use {
     crate::{Api, PaperMcJar, Result},
-    serde_derive::{Deserialize, Serialize},
+    serde::{Deserialize, Serialize},
 };
 
 #[derive(Serialize, Deserialize, Debug)]
